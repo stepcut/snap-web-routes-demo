@@ -11,7 +11,7 @@ import Control.Monad.State
 import Data.Data
 import Data.Lens.Template
 import Data.Time.Clock
-import Data.Text (Text)
+import Data.Text (Text, pack)
 import Snap.Core
 import Snap.Snaplet
 import Snap.Snaplet.Heist
@@ -59,3 +59,10 @@ heistURL :: MonadRoute m => URL m -> m [Node]
 heistURL u =
     do t <- showURL u
        return [TextNode t]
+
+webRoute :: (PathInfo url, MonadSnap m) => (url -> m ()) -> m ()
+webRoute router =
+    do rq <- getRequest
+       case fromPathInfo $ rqPathInfo rq of
+         (Left e) -> writeText (pack e)
+         (Right url) -> router url

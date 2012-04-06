@@ -37,10 +37,9 @@ import           Application
 -- would be given every request.
 index :: Handler App App ()
 index =
-    do countURL <- showURL (Count 10)
-       ifTop $ heistLocal (bindSplices (indexSplices countURL)) $ render "index"
+    do ifTop $ heistLocal (bindSplices indexSplices) $ render "index"
   where
-    indexSplices countURL =
+    indexSplices =
         [ ("start-time"  , startTimeSplice)
         , ("current-time", currentTimeSplice)
         , ("countURL"     , heistURL (Count 10))
@@ -79,17 +78,13 @@ routes = [ ("/",            index)
          , ("/echo/:stuff", echo)
          , ("", with heist heistServe)
          , ("", serveDirectory "static")
-         , ("wr", handleWR)
+         , ("wr", webRoute routeAppURL)
          ]
 
-handleWR :: Handler App App ()
-handleWR =
-    do rq <- getRequest 
-       case fromPathInfo $ rqPathInfo rq of
-         (Left e) -> writeText (T.pack e)
-         (Right appURL) ->
-             case appURL of
-               (Count n) -> writeText $ ("Count = " `T.append` (T.pack $ show n))
+routeAppURL :: MonadSnap m => AppURL -> m ()
+routeAppURL appURL =
+    case appURL of
+      (Count n) -> writeText $ ("Count = " `T.append` (T.pack $ show n))
 
 ------------------------------------------------------------------------------
 -- | The application initializer.
