@@ -22,7 +22,7 @@ Application.hs also defines some MonadRoute instances and a new function:
 
 The index.tpl now includes an additional link:
 
-         &lt;a href="${countURL}"&gt;count&lt;/a&gt;
+         <a href="${countURL}">count</a>
 
 In src/Site.hs in the index function we bind countURL to the type-safe URL via:
 
@@ -33,6 +33,6 @@ This is just a quick little hack. The `MonadRoute (HeistT m)` instance should ce
 It might be reasonable to extend heist so that you can use the type-safe URL directly like:
 
 
-         &lt;a href="#{Count 10}"&gt;count&lt;/a&gt;
+         <a href="#{Count 10}">count</a>
 
 That solution is actually less type-safe in most cases, since the template files are generally parse and runtime. But, it should still be able to provide a run-time warning.
